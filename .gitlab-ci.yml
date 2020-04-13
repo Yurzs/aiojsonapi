@@ -2,7 +2,7 @@ stages:
   - build
 
 build:
-  stage: pypi_build
+  stage: build
   tags:
     - docker
   image: alpine
