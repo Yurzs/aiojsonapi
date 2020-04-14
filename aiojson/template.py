@@ -1,6 +1,7 @@
 from functools import wraps
 
-import aiohttp.web
+import aiohttp.web_request
+
 
 class WrongDataType(Exception):
     def __init__(self, path):
@@ -17,10 +18,10 @@ class JsonTemplate:
         async def wrap(*args, **kwargs):
             request = None
             for arg in args:
-                if isinstance(arg, aiohttp.web.Request):
-                    request = None
+                if isinstance(arg, aiohttp.web_request.Request):
+                    request = arg
             validated_data = {}
-            if await request.data():
+            if await request.read():
                 validated_data = self.validate_data(await request.json(), self.template)
             return await func(*args, validated_data=validated_data, **kwargs)
 
