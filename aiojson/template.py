@@ -6,9 +6,14 @@ from aiojson.exception import ApiException
 from aiojson.response import GoodResponse, BadResponse
 
 
-class WrongDataType(Exception):
+class WrongDataType(ApiException):
     def __init__(self, path):
         super().__init__(f"Wrong data passed in {path}.")
+
+
+class DataMissing(ApiException):
+    def __init__(self, path):
+        super().__init__(f"Required data ({path}) is missing.")
 
 
 class JsonTemplate:
@@ -33,7 +38,7 @@ class JsonTemplate:
                 result = await func(*args, validated_data=validated_data, **kwargs)
                 return GoodResponse(result)
             except ApiException as e:
-                return BadResponse(e, e.status)
+                return BadResponse(str(e), e.status)
 
         return wrap
 
@@ -43,19 +48,26 @@ class JsonTemplate:
     def validate_data(self, data, template, path=""):
         data = data.copy()
         validated_data = {}
-        for key, template in template.items():
-            if isinstance(template, type):
-                try:
-                    validated_data[key] = template(data[key])
-                except ValueError:
+        for key, sub_template in template.items():
+            is_required = key in template.get("__required__", [])
+            try:
+                if not data.get(key) and is_required:
+                    raise DataMissing(f"{path}.{key}" if path else key)
+                elif not data.get(key) and not is_required:
+                    continue
+
+                if isinstance(sub_template, type):
+                    validated_data[key] = sub_template(data[key])
+                elif isinstance(sub_template, dict) and isinstance(data.get(key), dict):
+                    validated_data[key] = self.validate_data(data[key], sub_template,
+                                                             f"{path}.{key}" if path else key)
+                elif isinstance(template, list) and isinstance(data.get(key), list):
+
+                    validated_data[key] = self.validate_list(data[key], sub_template,
+                                                             f"{path}.{key}" if path else key)
+                else:
                     raise WrongDataType(f"{path}.{key}" if path else key)
-            elif isinstance(template, dict) and isinstance(data.get(key), dict):
-                validated_data[key] = self.validate_data(data[key], template,
-                                                         f"{path}.{key}" if path else key)
-            elif isinstance(template, list) and isinstance(data.get(key), list):
-                validated_data[key] = self.validate_list(data[key], template,
-                                                         f"{path}.{key}" if path else key)
-            else:
+            except ValueError:
                 raise WrongDataType(f"{path}.{key}" if path else key)
         return validated_data
 
