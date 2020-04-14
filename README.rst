@@ -16,7 +16,7 @@ Simple example:
     @JsonTemplate({
         "messages": [{
             "id": int,
-            "text: str
+            "text": str
     }])
     async def received_message(request, validated_data):
         pass
