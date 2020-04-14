@@ -2,6 +2,9 @@ from functools import wraps
 
 import aiohttp.web_request
 
+from aiojson.exception import ApiException
+from aiojson.response import GoodResponse, BadResponse
+
 
 class WrongDataType(Exception):
     def __init__(self, path):
@@ -16,14 +19,21 @@ class JsonTemplate:
     def __call__(self, func):
         @wraps(func)
         async def wrap(*args, **kwargs):
-            request = None
-            for arg in args:
-                if isinstance(arg, aiohttp.web_request.Request):
-                    request = arg
-            validated_data = {}
-            if await request.read():
-                validated_data = self.validate_data(await request.json(), self.template)
-            return await func(*args, validated_data=validated_data, **kwargs)
+            try:
+                request = None
+                for arg in args:
+                    if isinstance(arg, aiohttp.web_request.Request):
+                        request = arg
+                validated_data = {}
+                if await request.read():
+                    try:
+                        validated_data = self.validate_data(await request.json(), self.template)
+                    except WrongDataType as e:
+                        raise ApiException(e, 400)
+                result = await func(*args, validated_data=validated_data, **kwargs)
+                return GoodResponse(result)
+            except ApiException as e:
+                return BadResponse(e, e.status)
 
         return wrap
 
