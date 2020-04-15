@@ -32,7 +32,8 @@ class JsonTemplate:
                 validated_data = {}
                 if await request.read():
                     try:
-                        validated_data = self.validate_data(await request.json(), self.template)
+                        validated_data = self.validate_data(await request.json(),
+                                                            self.template.copy())
                     except WrongDataType as e:
                         raise ApiException(e, 400)
                 result = await func(*args, validated_data=validated_data, **kwargs)
@@ -48,8 +49,10 @@ class JsonTemplate:
     def validate_data(self, data, template, path=""):
         data = data.copy()
         validated_data = {}
+        required = template.pop("__required__", [])
+        template = {k: v for k, v in template.items() if not k.startswith("__")}
         for key, sub_template in template.items():
-            is_required = key in template.get("__required__", [])
+            is_required = key in required
             try:
                 if not data.get(key) and is_required:
                     raise DataMissing(f"{path}.{key}" if path else key)
@@ -61,7 +64,7 @@ class JsonTemplate:
                 elif isinstance(sub_template, dict) and isinstance(data.get(key), dict):
                     validated_data[key] = self.validate_data(data[key], sub_template,
                                                              f"{path}.{key}" if path else key)
-                elif isinstance(template, list) and isinstance(data.get(key), list):
+                elif isinstance(sub_template, list) and isinstance(data.get(key), list):
 
                     validated_data[key] = self.validate_list(data[key], sub_template,
                                                              f"{path}.{key}" if path else key)
