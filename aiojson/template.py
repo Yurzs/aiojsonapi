@@ -16,10 +16,17 @@ class DataMissing(ApiException):
         super().__init__(f"Required data ({path}) is missing.")
 
 
+class UnknownFields(ApiException):
+    def __init__(self, fields):
+        super().__init__(f"Unknown fields {fields}.")
+
+
 class JsonTemplate:
-    def __init__(self, template: dict):
+    def __init__(self, template: dict = None,
+                 ignore_unknown=True):
         self.validate_template(template)
-        self.template: dict = template
+        self.template: dict = template if template else {}
+        self.ignore_unknown = ignore_unknown
 
     def __call__(self, func):
         @wraps(func)
@@ -51,6 +58,8 @@ class JsonTemplate:
         validated_data = {}
         required = template.pop("__required__", [])
         template = {k: v for k, v in template.items() if not k.startswith("__")}
+        if set(data).difference(template) and not self.ignore_unknown:
+            raise UnknownFields(set(data).difference(template))
         for key, sub_template in template.items():
             is_required = key in required
             try:
