@@ -43,6 +43,10 @@ class JsonTemplate:
                                                             self.template.copy())
                     except WrongDataType as e:
                         raise ApiException(e, 400)
+                elif self.template.get("__required__"):
+                    raise ApiException("Required fields are missing {0}".format(
+                        self.template["__required__"]
+                    ))
                 result = await func(*args, validated_data=validated_data, **kwargs)
                 return GoodResponse(result)
             except ApiException as e:
