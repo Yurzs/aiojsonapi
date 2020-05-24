@@ -1,3 +1,4 @@
+import json
 from functools import wraps
 
 import aiohttp.web_request
@@ -61,7 +62,8 @@ class JsonTemplate:
                 return GoodResponse(result)
             except ApiException as e:
                 return BadResponse(e.message, e.status)
-
+            except json.decoder.JSONDecodeError:
+                return BadResponse("Wrong json data format")
         return wrap
 
     def validate_template(self, template):

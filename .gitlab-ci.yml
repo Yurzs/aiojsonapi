@@ -23,3 +23,5 @@ build:
     - pip3 install -U --upgrade setuptools pip twine setuptools wheel
     - python3 setup.py sdist bdist_wheel
     - twine upload dist/*
+  only:
+    - master
