@@ -1,6 +1,9 @@
 aiojson
 =======
 
+.. |coverage report| image:: https://git.yurzs.dev/yurzs/aiojson/badges/master/coverage.svg
+   :target: https://git.yurzs.dev/yurzs/aiojson/-/commits/master
+
 Simple json template verifier for ``aiohttp``
 
 Usage
