@@ -1,14 +1,25 @@
 stages:
+  - tests
   - build
+
+pytest:
+  stage: tests
+  tags:
+    - docker
+  image: python:latest
+  script:
+    - pip install -U pytest pytest-aiohttp pytest-asyncio pytest-cov
+    - pytest --cov-report term --cov=aiojson tests/
 
 build:
   stage: build
   tags:
     - docker
   image: alpine
-  script:
+  before_script:
     - apk update
     - apk add --update --no-cache --virtual .build-deps alpine-sdk python3-dev musl-dev postgresql-dev libffi-dev
+  script:
     - pip3 install -U --upgrade setuptools pip twine setuptools wheel
     - python3 setup.py sdist bdist_wheel
     - twine upload dist/*

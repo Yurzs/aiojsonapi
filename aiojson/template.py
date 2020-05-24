@@ -7,18 +7,33 @@ from aiojson.response import GoodResponse, BadResponse
 
 
 class WrongDataType(ApiException):
+    text = "Wrong data type."
+
     def __init__(self, path):
-        super().__init__(f"Wrong data passed in {path}.")
+        super().__init__({
+            "text": self.text,
+            "path": path,
+        })
 
 
 class DataMissing(ApiException):
+    text = "Required data is missing."
+
     def __init__(self, path):
-        super().__init__(f"Required data ({path}) is missing.")
+        super().__init__({
+            "text": self.text,
+            "path": path,
+        })
 
 
 class UnknownFields(ApiException):
+    text = "Unknown fields."
+
     def __init__(self, fields):
-        super().__init__(f"Unknown fields {fields}.")
+        super().__init__({
+            "text": self.text,
+            "path": fields,
+        })
 
 
 class JsonTemplate:
@@ -38,24 +53,19 @@ class JsonTemplate:
                         request = arg
                 validated_data = {}
                 if await request.read():
-                    try:
-                        validated_data = self.validate_data(await request.json(),
-                                                            self.template.copy())
-                    except WrongDataType as e:
-                        raise ApiException(e, 400)
+                    validated_data = self.validate_data(await request.json(),
+                                                        self.template.copy())
                 elif self.template.get("__required__"):
-                    raise ApiException("Required fields are missing {0}".format(
-                        self.template["__required__"]
-                    ))
+                    raise DataMissing(self.template["__required__"])
                 result = await func(*args, validated_data=validated_data, **kwargs)
                 return GoodResponse(result)
             except ApiException as e:
-                return BadResponse(str(e), e.status)
+                return BadResponse(e.message, e.status)
 
         return wrap
 
     def validate_template(self, template):
-        pass
+        """Validates template"""
 
     def validate_data(self, data, template, path=""):
         data = data.copy()
@@ -63,7 +73,7 @@ class JsonTemplate:
         required = template.pop("__required__", [])
         template = {k: v for k, v in template.items() if not k.startswith("__")}
         if set(data).difference(template) and not self.ignore_unknown:
-            raise UnknownFields(set(data).difference(template))
+            raise UnknownFields(list(set(data).difference(template)))
         for key, sub_template in template.items():
             is_required = key in required
             try:
@@ -83,6 +93,8 @@ class JsonTemplate:
                                                              f"{path}.{key}" if path else key)
                 else:
                     raise WrongDataType(f"{path}.{key}" if path else key)
+            except TypeError:
+                raise WrongDataType(f"{path}.{key}" if path else key)
             except ValueError:
                 raise WrongDataType(f"{path}.{key}" if path else key)
         return validated_data
