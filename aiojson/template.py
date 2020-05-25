@@ -1,6 +1,7 @@
 import json
 from functools import wraps
 
+import aiohttp.web
 import aiohttp.web_request
 
 from aiojson.exception import ApiException
@@ -59,6 +60,8 @@ class JsonTemplate:
                 elif self.template.get("__required__"):
                     raise DataMissing(self.template["__required__"])
                 result = await func(*args, validated_data=validated_data, **kwargs)
+                if isinstance(result, aiohttp.web.Response):
+                    return result
                 return GoodResponse(result)
             except ApiException as e:
                 return BadResponse(e.message, e.status)
