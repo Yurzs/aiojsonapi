@@ -15,13 +15,8 @@ build:
   stage: build
   tags:
     - docker
-  image: alpine
-  before_script:
-    - apk update
-    - apk add --update --no-cache --virtual .build-deps alpine-sdk python3-dev musl-dev postgresql-dev libffi-dev
+  image: python:latest
   script:
-    - pip3 install -U --upgrade setuptools pip twine setuptools wheel
-    - python3 setup.py sdist bdist_wheel
+    - pip install -U --upgrade setuptools pip twine setuptools wheel
+    - python setup.py sdist bdist_wheel
     - twine upload dist/*
-  only:
-    - master
