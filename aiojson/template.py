@@ -45,6 +45,15 @@ class JsonTemplate:
         self.template: dict = template if template else {}
         self.ignore_unknown = ignore_unknown
 
+    @staticmethod
+    def get_required(template):
+        required_list = template.pop("__required__", [])
+        if "__all__" in required_list:
+            required_list.remove("__all__")
+            for key in template.keys():
+                required_list.append(key)
+        return required_list
+
     def __call__(self, func):
         @wraps(func)
         async def wrap(*args, **kwargs):
@@ -75,7 +84,7 @@ class JsonTemplate:
     def validate_data(self, data, template, path=""):
         data = data.copy()
         validated_data = {}
-        required = template.pop("__required__", [])
+        required = self.get_required(template)
         template = {k: v for k, v in template.items() if not k.startswith("__")}
         if set(data).difference(template) and not self.ignore_unknown:
             raise UnknownFields(list(set(data).difference(template)))
