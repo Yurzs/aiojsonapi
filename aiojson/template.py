@@ -67,7 +67,7 @@ class JsonTemplate:
                     validated_data = self.validate_data(await request.json(),
                                                         self.template.copy())
                 elif self.template.get("__required__"):
-                    raise DataMissing(self.template["__required__"])
+                    raise DataMissing(self.get_required(self.template))
                 result = await func(*args, validated_data=validated_data, **kwargs)
                 if isinstance(result, aiohttp.web.Response):
                     return result
@@ -76,6 +76,7 @@ class JsonTemplate:
                 return BadResponse(e.message, e.status)
             except json.decoder.JSONDecodeError:
                 return BadResponse("Wrong json data format")
+
         return wrap
 
     def validate_template(self, template):
