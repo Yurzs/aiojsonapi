@@ -5,9 +5,10 @@ from aiojson.exception import ApiException
 
 class ApiClient:
 
-    def __init__(self, server_ip, server_port):
+    def __init__(self, server_ip, server_port, https=True):
         self.server_ip = server_ip
         self.server_port = server_port
+        self.protocol = "https" if https else "http"
 
     @staticmethod
     def _delete_none(request: dict):
@@ -16,7 +17,7 @@ class ApiClient:
         return {key: value for key, value in request.items() if value is not None}
 
     def _format_path(self, endpoint):
-        return f"http://{self.server_ip}:{self.server_port}/{endpoint}"
+        return f"{self.protocol}://{self.server_ip}:{self.server_port}/{endpoint}"
 
     async def _make_request(self, endpoint, method, json_data=None, keep_none=False):
         url = self._format_path(endpoint)
