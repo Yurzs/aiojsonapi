@@ -1,6 +1,6 @@
 
 
-class ApiException(Exception):
+class ApiException(BaseException):
     def __init__(self, message, status=400):
         super().__init__(message)
         if isinstance(message, dict):
