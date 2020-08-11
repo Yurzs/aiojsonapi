@@ -27,7 +27,7 @@ class ApiClient:
             async with _method(url, json=data) as response:
                 result = await response.json()
                 if result["error"]:
-                    raise ApiException(result["reason"])
+                    raise ApiException(result["reason"].get("text", result["reason"]))
                 else:
                     return result["result"]
 
