@@ -92,9 +92,9 @@ class JsonTemplate:
         for key, sub_template in template.items():
             is_required = key in required
             try:
-                if not data.get(key) and is_required:
+                if data.get(key) is None and is_required:
                     raise DataMissing(f"{path}.{key}" if path else key)
-                elif not data.get(key) and not is_required:
+                elif data.get(key) is None and not is_required:
                     continue
 
                 if isinstance(sub_template, type):
