@@ -67,7 +67,7 @@ class JsonTemplate:
                     validated_data = self.validate_data(await request.json(),
                                                         self.template.copy())
                 elif self.template.get("__required__"):
-                    raise DataMissing(self.get_required(self.template))
+                    raise DataMissing(self.get_required(self.template.copy()))
                 result = await func(*args, validated_data=validated_data, **kwargs)
                 if isinstance(result, aiohttp.web.Response):
                     return result
