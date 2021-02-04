@@ -20,7 +20,7 @@ def route(method, path, **kwargs):
                 return GoodResponse(result)
             except ApiException as e:
                 return BadResponse(e.message, status=e.status)
-            except Exception as e:
+            except BaseException as e:
                 log.exception(e)
                 return BadResponse("Something went wrong. Please try again later")
 
