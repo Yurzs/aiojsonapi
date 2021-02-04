@@ -1,5 +1,4 @@
 import logging
-from functools import wraps
 
 import aiohttp.web
 
