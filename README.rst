@@ -1,5 +1,5 @@
-aiojson
-=======
+aiojsonapi
+==========
 |pipeline status| |coverage report| |pypi link|
 
 .. |coverage report| image:: https://git.yurzs.dev/yurzs/aiojson/badges/master/coverage.svg
@@ -20,7 +20,7 @@ Simple example:
 
 .. code-block:: python
 
-    from aiohttp import JsonTemplate
+    from aiojsonapi import JsonTemplate
 
 
     @JsonTemplate({

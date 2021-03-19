@@ -1,8 +1,8 @@
 import aiohttp.web
 import pytest
 
-from aiojson import routes
-from aiojson.exception import ApiException
+from aiojsonapi import routes
+from aiojsonapi.exception import ApiException
 
 
 @pytest.mark.parametrize("method", [

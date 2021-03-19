@@ -1,7 +1,6 @@
 import aiohttp.web
-import pytest
 
-from aiojson.middleware import error_middleware
+from aiojsonapi.middleware import error_middleware
 
 
 async def test_good404(aiohttp_client):

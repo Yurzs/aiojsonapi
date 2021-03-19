@@ -4,8 +4,8 @@ from functools import wraps
 import aiohttp.web
 import aiohttp.web_request
 
-from aiojson.exception import ApiException
-from aiojson.response import GoodResponse, BadResponse
+from aiojsonapi.exception import ApiException
+from aiojsonapi.response import GoodResponse, BadResponse
 
 
 class WrongDataType(ApiException):

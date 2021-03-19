@@ -1,6 +1,6 @@
 import aiohttp
 
-from aiojson.exception import ApiException
+from aiojsonapi.exception import ApiException
 
 
 class ApiClient:

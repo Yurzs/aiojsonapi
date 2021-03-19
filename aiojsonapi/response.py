@@ -2,7 +2,7 @@ import json
 
 import aiohttp.web
 
-from aiojson.config import config
+from aiojsonapi.config import config
 
 
 class GoodResponse(aiohttp.web.Response):

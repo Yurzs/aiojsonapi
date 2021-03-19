@@ -1,8 +1,8 @@
 import aiohttp.web
 import pytest
 
-from aiojson import routes
-from aiojson.template import JsonTemplate, DataMissing, WrongDataType, UnknownFields
+from aiojsonapi import routes
+from aiojsonapi.template import JsonTemplate, DataMissing, WrongDataType, UnknownFields
 
 
 @pytest.mark.parametrize("method", [

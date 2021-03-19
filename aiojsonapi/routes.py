@@ -2,8 +2,8 @@ import logging
 
 import aiohttp.web
 
-from aiojson.response import BadResponse, GoodResponse
-from aiojson.exception import ApiException
+from aiojsonapi.response import BadResponse, GoodResponse
+from aiojsonapi.exception import ApiException
 
 routes = aiohttp.web.RouteTableDef()
 

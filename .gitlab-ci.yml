@@ -9,7 +9,7 @@ pytest:
   image: python:latest
   script:
     - pip install -U pytest pytest-aiohttp pytest-asyncio pytest-cov
-    - pytest --cov-report term --cov=aiojson tests/
+    - pytest --cov-report term --cov=aiojsonapi tests/
 
 build:
   stage: build

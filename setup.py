@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 with open("README.rst") as description_file:
     setup(
-        name="aiojson",
+        name="aiojsonapi",
         version="0.3.{0}".format(int(datetime.datetime.now().timestamp())),
         description="Simple json request template validator for aiohttp",
         long_description=description_file.read(),
