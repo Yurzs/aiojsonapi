@@ -69,7 +69,7 @@ class JsonTemplate:
                 elif self.template.get("__required__"):
                     raise DataMissing(self.get_required(self.template.copy()))
                 result = await func(*args, validated_data=validated_data, **kwargs)
-                if isinstance(result, aiohttp.web.Response):
+                if isinstance(result, aiohttp.web.StreamResponse):
                     return result
                 return GoodResponse(result)
             except ApiException as e:

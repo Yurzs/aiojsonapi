@@ -15,7 +15,7 @@ def route(method, path, **kwargs):
         async def arg_wrap(*inner_args, **inner_kwargs):
             try:
                 result = await func(*inner_args, **inner_kwargs)
-                if isinstance(result, aiohttp.web.Response):
+                if isinstance(result, aiohttp.web.StreamResponse):
                     return result
                 return GoodResponse(result)
             except ApiException as e:
