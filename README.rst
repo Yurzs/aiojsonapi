@@ -9,7 +9,7 @@ aiojsonapi
    :target: https://git.yurzs.dev/yurzs/aiojson/-/commits/master
 
 .. |pypi link| image:: https://badge.fury.io/py/aiojson.svg
-   :target: https://pypi.org/project/aiojson
+   :target: https://pypi.org/project/aiojsonapi
 
 Simple json template verifier for ``aiohttp``
 
