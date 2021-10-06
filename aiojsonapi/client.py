@@ -1,3 +1,5 @@
+import json
+
 import aiohttp
 
 from aiojsonapi.exception import ApiException
@@ -8,10 +10,15 @@ class ApiClient:
     error_text_field = "reason"
     result_wrapped_in_field = "result"
 
-    def __init__(self, server_ip, server_port=None, https=True):
+    def __init__(self, server_ip, server_port=None, https=True,
+                 json_decoder=json.JSONDecoder,
+                 json_encoder=json.JSONEncoder,
+                 ):
         self.server_ip = server_ip
         self.server_port = server_port
         self.protocol = "https" if https else "http"
+        self.json_decoder = json_decoder
+        self.json_encoder = json_encoder
 
     @staticmethod
     def _delete_none(request: dict):
@@ -31,8 +38,11 @@ class ApiClient:
         data = self._delete_none(json_data or {}) if not keep_none else json_data or {}
         async with aiohttp.ClientSession() as session:
             _method = getattr(session, method)
-            async with _method(url, json=data, headers=headers) as response:
-                result = await response.json()
+            async with _method(
+                    url, data=json.dumps(data, cls=self.json_encoder), headers=headers
+            ) as response:
+                body = await response.text()
+                result = json.loads(body, cls=self.json_decoder)
                 if result.get(self.error_field_name):
                     raise ApiException(result.get(self.error_text_field))
                 else:
