@@ -11,7 +11,7 @@ aiojsonapi
 .. |pypi link| image:: https://badge.fury.io/py/aiojson.svg
    :target: https://pypi.org/project/aiojsonapi
 
-Simple json template verifier for ``aiohttp``
+Aiohttp API constructor with dataclass based request validation.
 
 Usage
 -----
@@ -20,13 +20,15 @@ Simple example:
 
 .. code-block:: python
 
-    from aiojsonapi import JsonTemplate
+    import typing
+
+    from aiojsonapi import JSONTemplate
 
 
-    @JsonTemplate({
+    @JSONTemplate({
         "messages": [{
             "id": int,
-            "text": str
+            "text": typing.Optional[str]
     }])
-    async def received_message(request, validated_data):
+    async def received_message(request):
         pass

@@ -1,0 +1,7 @@
+poetry.lock
+*venv*
+*pycache*
+.pytest_cache
+*.pyc
+*.pyo
+.idea
