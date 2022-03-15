@@ -1,6 +1,6 @@
 [tool.poetry]
-name = "jsonaioapi"
-version = "4.0"
+name = "aiojsonapi"
+version = "4.1.1"
 description = "JSON aiohttp API constructor"
 authors = ["Yurzs <yury@yurzs.dev>"]
 license = "MIT"
