@@ -79,5 +79,6 @@ class JSONTemplate:
                 return BadResponse(error.message, status=error.status)
             except json.decoder.JSONDecodeError:
                 return BadResponse("Wrong json data format")
-
+            except BaseException as error:
+                return BadResponse(repr(error))
         return wrap
