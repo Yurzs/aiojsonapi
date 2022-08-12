@@ -51,7 +51,7 @@ class ApiClient:
             ) as response:
                 body = await response.text()
                 result = json.loads(body, cls=self.json_decoder)
-                if result.get(self.error_field_name):
+                if self.error_field_name in result:
                     raise ApiException(result.get(self.error_text_field))
                 if self.result_wrapped_in_field:
                     return result[self.result_wrapped_in_field]
